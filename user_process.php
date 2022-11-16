@@ -77,9 +77,34 @@
   // Atualizar senha do usuário
   } else if($type === "changepassword") {
 
+  
+
     // Receber dados do post
     $password = filter_input(INPUT_POST, "password");
     $confirmpassword = filter_input(INPUT_POST, "confirmpassword");
+   
+
+    $userData = $userDao->verifyToken();
+
+    $id = $userData->id;
+    
+    if($password == $confirmpassword){
+
+      // cria um novo objeto de usuario
+      $user = new User();
+
+      $finalPassword = $user->generatePassword($password);
+      
+      $user->password = $finalPassword;
+      $user->id = $id;
+
+      $userDao->changePassword($user);
+
+    } else {
+
+      $message->setMessage("confirmação de senha errada!", "error", "back");
+
+    }
 
     // Resgata dados do usuário
     $userData = $userDao->verifyToken();
